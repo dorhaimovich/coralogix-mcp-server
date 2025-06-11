@@ -1,0 +1,57 @@
+{
+    "name": "coralogix-mcp-server",
+    "version": "0.1.0",
+    "description": "Model Context Protocol server for Coralogix log querying and analysis",
+    "type": "module",
+    "main": "dist/index.js",
+    "bin": {
+        "coralogix-mcp-server": "dist/index.js"
+    },
+    "files": [
+        "dist/",
+        "README.md",
+        "package.json"
+    ],
+    "scripts": {
+        "build": "tsc",
+        "start": "node dist/index.js",
+        "dev": "tsx index.ts",
+        "prepare": "npm run build",
+        "prepublishOnly": "npm run build"
+    },
+    "keywords": [
+        "mcp",
+        "model-context-protocol",
+        "coralogix",
+        "logs",
+        "observability",
+        "dataprime",
+        "lucene",
+        "claude",
+        "ai-tools"
+    ],
+    "author": "Dor Haimovich <dor@oobit.com>",
+    "license": "MIT",
+    "dependencies": {
+        "@modelcontextprotocol/sdk": "^1.12.1",
+        "node-fetch": "^3.3.2"
+    },
+    "devDependencies": {
+        "@types/node": "^20.10.0",
+        "@types/node-fetch": "^2.6.9",
+        "tsx": "^4.6.0",
+        "typescript": "^5.3.0"
+    },
+    "engines": {
+        "node": ">=18.0.0"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/your-username/coralogix-mcp-server.git"
+    },
+    "bugs": {
+        "url": "https://github.com/your-username/coralogix-mcp-server/issues"
+    },
+    "homepage": "https://github.com/your-username/coralogix-mcp-server#readme",
+    "types": "./dist/index.d.ts"
+}
