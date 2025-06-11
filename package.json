@@ -47,11 +47,11 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/your-username/coralogix-mcp-server.git"
+        "url": "git+https://github.com/dorhaimovich/coralogix-mcp-server.git"
     },
     "bugs": {
-        "url": "https://github.com/your-username/coralogix-mcp-server/issues"
+        "url": "https://github.com/dorhaimovich/coralogix-mcp-server/issues"
     },
-    "homepage": "https://github.com/your-username/coralogix-mcp-server#readme",
+    "homepage": "https://github.com/dorhaimovich/coralogix-mcp-server#readme",
     "types": "./dist/index.d.ts"
 }
