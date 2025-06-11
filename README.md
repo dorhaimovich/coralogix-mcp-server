@@ -1,6 +1,48 @@
 # Coralogix MCP Server
 
-A Model Context Protocol (MCP) server that provides seamless integration with Coralogix's log querying and analysis capabilities. This server enables AI assistants to interact with Coralogix logs using both Lucene and DataPrime query languages.
+A Model Context Protocol (MCP) server that provides seamless integration with Coralogix's log querying and analysis capabilities. This server enables AI assistants like Claude Desktop to interact with Coralogix logs using both Lucene and DataPrime query languages.
+
+## 🚀 Quick Start for Claude Desktop
+
+### 1. Install the Package
+```bash
+npm install -g dor-coralogix-mcp-server
+```
+
+### 2. Get Your Coralogix Credentials
+- **API Key**: Get from Coralogix Dashboard → Data Flow → API Keys (needs "Data Querying" permissions)
+- **Domain**: Choose based on your region (see [Domains](#coralogix-domains) below)
+
+### 3. Configure Claude Desktop
+Add to your Claude Desktop MCP settings file:
+
+**Location of settings file:**
+- **macOS**: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- **Windows**: `%APPDATA%\Claude\claude_desktop_config.json`
+
+**Configuration:**
+```json
+{
+  "mcpServers": {
+    "coralogix": {
+      "command": "dor-coralogix-mcp-server",
+      "env": {
+        "CORALOGIX_API_KEY": "your-api-key-here",
+        "CORALOGIX_DOMAIN": "your-coralogix-domain"
+      }
+    }
+  }
+}
+```
+
+### 4. Restart Claude Desktop
+After saving the configuration, completely quit and restart Claude Desktop.
+
+### 5. Start Querying!
+You can now ask Claude to search your Coralogix logs:
+- "Show me all error logs from the past hour"
+- "Find API timeout errors in the payment service"
+- "Analyze log patterns for the web application"
 
 ## Features
 
@@ -12,29 +54,27 @@ A Model Context Protocol (MCP) server that provides seamless integration with Co
 - **Aggregations**: Built-in support for grouping and aggregating log data
 - **Custom Templates**: Predefined query templates for common use cases
 
-## Installation
+## Installation Options
 
+### Option 1: npm (Recommended)
 ```bash
-npm install -g coralogix-mcp-server
+npm install -g dor-coralogix-mcp-server
 ```
 
-Or clone and build locally:
-
+### Option 2: npx (No Installation)
 ```bash
-git clone https://github.com/your-username/coralogix-mcp-server.git
+npx dor-coralogix-mcp-server
+```
+
+### Option 3: Clone and Build
+```bash
+git clone https://github.com/dorhaimovich/coralogix-mcp-server.git
 cd coralogix-mcp-server
 npm install
 npm run build
 ```
 
 ## Configuration
-
-Set the following environment variables:
-
-```bash
-export CORALOGIX_API_KEY="your-api-key-here"
-export CORALOGIX_DOMAIN="your-coralogix-domain"
-```
 
 ### Coralogix Domains
 
@@ -55,30 +95,26 @@ Choose the appropriate domain based on your Coralogix region:
 3. Create a new API key with **Data Querying** permissions
 4. Use the generated key as your `CORALOGIX_API_KEY`
 
-## Usage
+## Usage Examples
 
-### With Claude Desktop
+### With Claude Desktop (Recommended)
 
-Add to your Claude Desktop MCP settings:
+Once configured, you can ask Claude natural language questions:
 
-```json
-{
-  "mcpServers": {
-    "coralogix": {
-      "command": "coralogix-mcp-server",
-      "env": {
-        "CORALOGIX_API_KEY": "your-api-key-here",
-        "CORALOGIX_DOMAIN": "your-coralogix-domain"
-      }
-    }
-  }
-}
-```
+**Basic Queries:**
+- "Show me error logs from the last 2 hours"
+- "Find all logs containing 'timeout' from the api-service"
+- "List all applications in my Coralogix account"
+
+**Advanced Analysis:**
+- "Perform error analysis on the payment service for the last 24 hours"
+- "Show me security incidents from today"
+- "Analyze log patterns for the web application"
 
 ### Standalone Usage
 
 ```bash
-CORALOGIX_API_KEY="your-key" CORALOGIX_DOMAIN="coralogix.com" coralogix-mcp-server
+CORALOGIX_API_KEY="your-key" CORALOGIX_DOMAIN="coralogix.com" dor-coralogix-mcp-server
 ```
 
 ## Available Tools
@@ -200,142 +236,40 @@ Perform security-focused log analysis.
 - `severity`: Minimum severity level to analyze - default: "WARNING"
 
 #### `custom_dataprime_query`
-Execute queries using predefined templates or custom DataPrime queries.
+Execute custom DataPrime queries using predefined templates.
 
 **Templates:**
 - `time_series_analysis`: Analyze trends over time
-- `top_errors_by_user`: Find users with the most errors
-- `api_performance_monitoring`: Monitor API endpoint performance
-- `custom`: Execute a custom DataPrime query
+- `top_errors_by_user`: Find users with most errors
+- `api_performance_monitoring`: Monitor API response times
+- `custom`: Execute your own DataPrime query
 
-**Example:**
-```javascript
-{
-  "template": "api_performance_monitoring",
-  "parameters": {
-    "application": "api-gateway",
-    "timeRange": "6h"
-  }
-}
-```
+## Troubleshooting
 
-## DataPrime Query Examples
+### Common Issues
 
-### Basic Filtering and Grouping
-```sql
-source logs 
-| filter $l.applicationname == "web-service" 
-| filter $m.severity == "ERROR" 
-| groupby $d.error_type aggregate count() as error_count 
-| sort error_count desc
-```
+1. **"MCP server not found"**
+   - Make sure you installed the package: `npm install -g dor-coralogix-mcp-server`
+   - Restart Claude Desktop completely
 
-### Time Series Analysis
-```sql
-source logs 
-| groupby bin($m.timestamp, "1h") aggregate count() as log_count 
-| sort timestamp
-```
+2. **"Authentication failed"**
+   - Verify your `CORALOGIX_API_KEY` is correct
+   - Ensure the API key has "Data Querying" permissions
+   - Check that your `CORALOGIX_DOMAIN` matches your region
 
-### Pattern Extraction
-```sql
-source logs 
-| extract $d.log into $d.parsed using regexp(e=/(?<method>\\w+)\\s+(?<path>\\/[^\\s]*)\\s+(?<status>\\d+)/) 
-| filter $d.parsed.method != null 
-| groupby $d.parsed.method, $d.parsed.status aggregate count() as request_count
-```
+3. **"400 Bad Request" errors**
+   - Check your domain configuration
+   - Verify the query syntax (Lucene vs DataPrime)
 
-### Performance Analysis
-```sql
-source logs 
-| filter $d.response_time != null 
-| groupby $l.applicationname aggregate 
-    avg($d.response_time) as avg_response_time,
-    percentile($d.response_time, 95) as p95_response_time,
-    count() as request_count
-```
+### Need Help?
 
-## Error Handling
-
-The server provides detailed error messages for common issues:
-
-- **Missing API Key**: Ensure `CORALOGIX_API_KEY` environment variable is set
-- **Invalid Domain**: Check that `CORALOGIX_DOMAIN` matches your Coralogix region
-- **Authentication Errors**: Verify your API key has the correct permissions
-- **Query Syntax Errors**: Review DataPrime/Lucene syntax in the Coralogix documentation
-
-## Development
-
-### Building from Source
-
-```bash
-git clone https://github.com/your-username/coralogix-mcp-server.git
-cd coralogix-mcp-server
-npm install
-npm run build
-```
-
-### Development Mode
-
-```bash
-npm run dev
-```
-
-### Testing
-
-```bash
-# Set environment variables
-export CORALOGIX_API_KEY="your-test-key"
-export CORALOGIX_DOMAIN="coralogix.com"
-
-# Run the server
-npm start
-```
-
-## API Reference
-
-### Coralogix API Endpoints
-
-The server uses the following Coralogix API endpoints:
-
-- **DataPrime Query API**: `https://ng-api-http.{domain}/api/v1/dataprime/query`
-- **Authentication**: Bearer token in Authorization header
-- **Response Format**: NDJSON (Newline Delimited JSON)
-
-### Rate Limits
-
-Coralogix imposes the following limits:
-- Maximum 12,000 results per query
-- Request rate limits vary by plan
-- 100MB data fetch limit for high-tier data
+- **Issues**: https://github.com/dorhaimovich/coralogix-mcp-server/issues
+- **npm Package**: https://www.npmjs.com/package/dor-coralogix-mcp-server
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+Feel free to open issues or submit pull requests on GitHub!
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For issues and questions:
-
-1. Check the [Coralogix Documentation](https://coralogix.com/docs/)
-2. Review DataPrime syntax in the [DataPrime Reference](https://coralogix.com/docs/dataprime/)
-3. Open an issue on GitHub
-4. Contact Coralogix support for API-related issues
-
-## Changelog
-
-### v0.1.0
-- Initial release
-- Support for Lucene and DataPrime queries
-- Built-in analytics templates
-- Log pattern analysis
-- Security analysis capabilities
-- Context retrieval functionality
+MIT License - see the [LICENSE](LICENSE) file for details.
