@@ -1,5 +1,5 @@
 {
-    "name": "coralogix-mcp-server",
+    "name": "dor-coralogix-mcp-server",
     "version": "0.1.0",
     "description": "Model Context Protocol server for Coralogix log querying and analysis",
     "type": "module",
